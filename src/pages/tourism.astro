@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro'
+import TourismShowcase from '../components/tourism/TourismShowcase.astro'
+import {tourismPlaces} from '../components/tourism/TourismPlaces'
+import Navbar from '../components/Home/Navbar.astro'
+---
+
+<Layout title="Turismo Comunidad">
+
+  <Navbar />
+
+  <main>
+    <!-- SHOWCASE -->
+    <section class="relative bg-[#e7e7e7] py-25 px-15 overflow-hidden">
+
+      <div class="relative z-10 max-w-7xl mx-auto px-6">
+
+        <!-- LABEL -->
+        <div class="inline-flex mb-10">
+          <span
+            class="bg-black text-white text-xs tracking-[0.2em] uppercase px-6 py-3 relative"
+            style="clip-path: polygon(0 0, 92% 0, 100% 50%, 92% 100%, 0 100%);"
+          >
+            Lugares Turísticos
+          </span>
+        </div>
+
+        <!-- TITLE -->
+        <h2 class="text-6xl md:text-8xl uppercase leading-none font-black tracking-tight mb-16 text-black">
+          Descubre<br />
+          Nuestra Comunidad
+        </h2>
+
+        <!-- CARDS -->
+        {
+          tourismPlaces.map((place) => (
+            <div class="mb-12">
+              <TourismShowcase
+                title={place.title}
+                slug={place.slug}
+                description={place.description}
+                location={place.location}
+                date={place.date}
+                image={place.image}
+                tags={place.features}
+              />
+            </div>
+          ))
+        }
+
+        <div class="p-10"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+</Layout>
+

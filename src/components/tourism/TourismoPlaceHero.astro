@@ -1,0 +1,42 @@
+---
+interface Props {
+  title: string
+  subtitle: string
+  image: string
+}
+
+const {
+  title,
+  subtitle,
+  image,
+} = Astro.props
+
+---
+
+
+<section class="relative h-[50vh] md:h-[70vh] overflow-hidden">
+  <img
+    src={image}
+    alt={title}
+    class="w-full h-full object-cover animate-fade-in"
+  />
+  <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20"></div>
+
+  <div class="absolute bottom-0 left-0 right-0 p-6 md:p-16">
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors duration-300 mb-6 group"
+    >
+      <span class="group-hover:-translate-x-1 transition-transform duration-300">&larr;</span>
+      <span class="uppercase tracking-[0.3em] text-xs">Volver al inicio</span>
+    </a>
+
+    <h1 class="text-4xl sm:text-5xl md:text-8xl font-black uppercase leading-[0.9] mb-4">
+      {title}
+    </h1>
+
+    <p class="text-lg md:text-2xl text-neutral-300 max-w-2xl font-light">
+      {subtitle}
+    </p>
+  </div>
+</section>

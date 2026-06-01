@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Home/Navbar.astro';
+import Footer from '../components/shared/Footer.astro';
+import PostsHeader from '../components/posts/PostsHeader.astro';
+import PostsFilters from '../components/posts/PostsFilters.astro';
+import PostsGrid from '../components/posts/PostsGrid.astro';
+import PostsModal from '../components/posts/PostsModal.astro';
+import LoadMoreButton from '../components/posts/LoadMoreButton.astro';
+import { activities, INITIAL_VISIBLE } from '../data/activities';
+---
+<Layout title="Actividades | I.E. 80511 - Ramon Castilla">
+  <Navbar />
+  <main class="flex-1 max-w-[1440px] mx-auto w-full px-6 md:px-10 pt-24 pb-12">
+    <PostsHeader />
+    <PostsFilters />
+    <PostsGrid activities={activities} visibleCount={INITIAL_VISIBLE} />
+    <LoadMoreButton />
+  </main>
+  <PostsModal activities={activities} />
+  <Footer />
+</Layout>

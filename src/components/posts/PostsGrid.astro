@@ -1,0 +1,55 @@
+---
+import type { ImageMetadata } from 'astro';
+import Container from '../shared/Container.astro';
+import PostsCard from './PostsCard.astro';
+
+export interface ActivityData {
+  title: string;
+  category: string;
+  location: string;
+  year: string;
+  image: ImageMetadata | ImageMetadata[];
+  alt: string;
+  description: string;
+}
+
+export interface Props {
+  activities: ActivityData[];
+  visibleCount: number;
+}
+
+const { activities, visibleCount } = Astro.props;
+---
+
+<Container>
+  <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {activities.map((activity, index) => (
+      <div
+        data-category={activity.category}
+        data-activity-index={index}
+        role="button"
+        tabindex="0"
+        aria-label={`Ver detalle de ${activity.title}`}
+        class:list={[
+          "post-card-item",
+          "cursor-pointer",
+          "outline-none",
+          "focus-visible:ring-2",
+          "focus-visible:ring-primary",
+          "focus-visible:ring-offset-2",
+          "rounded-xl",
+          index >= visibleCount ? "hidden" : ""
+        ]}
+      >
+        <PostsCard
+          title={activity.title}
+          category={activity.category}
+          location={activity.location}
+          year={activity.year}
+          image={activity.image}
+          alt={activity.alt}
+        />
+      </div>
+    ))}
+  </div>
+</Container>

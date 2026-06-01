@@ -1,0 +1,326 @@
+---
+import type { ImageMetadata } from 'astro';
+import Icon from '../shared/Icon.astro';
+
+interface ActivityData {
+  title: string;
+  category: string;
+  location: string;
+  year: string;
+  image: ImageMetadata | ImageMetadata[];
+  alt: string;
+  description: string;
+}
+
+interface Props {
+  activities: ActivityData[];
+}
+
+const { activities } = Astro.props;
+
+const serializedActivities = activities.map((a) => {
+  const images = Array.isArray(a.image)
+    ? a.image.map((img: ImageMetadata) => (img as any).src)
+    : [(a.image as any).src];
+  return {
+    title: a.title,
+    category: a.category,
+    location: a.location,
+    year: a.year,
+    images,
+    alt: a.alt,
+    description: a.description,
+  };
+});
+
+const activitiesJson = JSON.stringify(serializedActivities);
+---
+
+<div
+  id="posts-modal-overlay"
+  class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"
+>
+  <div
+    id="posts-modal"
+    class="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl scale-95 transition-transform duration-300"
+  >
+    <div class="relative">
+      <div id="modal-images" class="rounded-t-2xl overflow-hidden">
+      </div>
+      <button
+        id="modal-close"
+        class="absolute top-3 right-3 z-10 p-2 bg-black/40 hover:bg-black/60 text-white rounded-full transition-colors"
+        aria-label="Cerrar"
+      >
+        <Icon name="close" size={20} />
+      </button>
+    </div>
+    <div class="p-6 md:p-8">
+      <span
+        id="modal-category"
+        class="inline-block text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary px-3 py-1 rounded-full mb-3"
+      ></span>
+      <h2 id="modal-title" class="text-xl md:text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2"></h2>
+      <div class="flex flex-wrap items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
+        <span id="modal-location"></span>
+        <span class="text-slate-300 dark:text-slate-600">&bull;</span>
+        <span id="modal-year"></span>
+      </div>
+      <p id="modal-description" class="text-slate-700 dark:text-slate-300 leading-relaxed text-base"></p>
+    </div>
+  </div>
+</div>
+
+<span id="activities-data" style="display:none" set:html={activitiesJson}></span>
+
+<script is:inline>
+  var activitiesDataEl = document.getElementById("activities-data");
+  var activities = [];
+  if (activitiesDataEl && activitiesDataEl.textContent) {
+    try {
+      activities = JSON.parse(activitiesDataEl.textContent.trim());
+    } catch (err) {
+      console.error("Error parsing activities data:", err);
+    }
+  }
+
+  var overlay = document.getElementById("posts-modal-overlay");
+  var modal = document.getElementById("posts-modal");
+  var modalImages = document.getElementById("modal-images");
+  var modalCategory = document.getElementById("modal-category");
+  var modalTitle = document.getElementById("modal-title");
+  var modalLocation = document.getElementById("modal-location");
+  var modalYear = document.getElementById("modal-year");
+  var modalDescription = document.getElementById("modal-description");
+  var closeBtn = document.getElementById("modal-close");
+
+  var currentIndex = -1;
+  var modalSliderCurrent = 0;
+  var modalSliderTotal = 0;
+  var modalSliderTimer = null;
+
+  function getModalSliderTrack() {
+    return document.getElementById("modal-slider-track");
+  }
+
+  function goToModalSlide(index) {
+    if (modalSliderTotal <= 1) return;
+    var track = getModalSliderTrack();
+    if (!track) return;
+
+    modalSliderCurrent = Math.max(0, Math.min(index, modalSliderTotal - 1));
+    track.style.transform = 'translateX(-' + (modalSliderCurrent * 100) + '%)';
+
+    var prevBtn = document.getElementById("modal-slider-prev");
+    var nextBtn = document.getElementById("modal-slider-next");
+    if (prevBtn) {
+      prevBtn.style.opacity = modalSliderCurrent === 0 ? "0.4" : "1";
+      prevBtn.style.pointerEvents = modalSliderCurrent === 0 ? "none" : "auto";
+    }
+    if (nextBtn) {
+      nextBtn.style.opacity = modalSliderCurrent >= modalSliderTotal - 1 ? "0.4" : "1";
+      nextBtn.style.pointerEvents = modalSliderCurrent >= modalSliderTotal - 1 ? "none" : "auto";
+    }
+
+    var dots = document.querySelectorAll("#modal-slider-dots button");
+    dots.forEach(function(dot, i) {
+      if (i === modalSliderCurrent) {
+        dot.classList.add("bg-white", "w-6");
+        dot.classList.remove("bg-white/50");
+      } else {
+        dot.classList.add("bg-white/50");
+        dot.classList.remove("bg-white", "w-6");
+      }
+    });
+  }
+
+  function initModalSlider(total) {
+    modalSliderTotal = total;
+    modalSliderCurrent = 0;
+
+    if (total <= 1) return;
+
+    var prevBtn = document.getElementById("modal-slider-prev");
+    var nextBtn = document.getElementById("modal-slider-next");
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        goToModalSlide(modalSliderCurrent - 1);
+        resetModalAutoplay();
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        goToModalSlide(modalSliderCurrent + 1);
+        resetModalAutoplay();
+      });
+    }
+
+    var dotBtns = document.querySelectorAll("#modal-slider-dots button");
+    dotBtns.forEach(function(dot, i) {
+      dot.addEventListener("click", function(e) {
+        e.stopPropagation();
+        goToModalSlide(i);
+        resetModalAutoplay();
+      });
+    });
+
+    goToModalSlide(0);
+    startModalAutoplay();
+  }
+
+  function startModalAutoplay() {
+    stopModalAutoplay();
+    modalSliderTimer = setInterval(function() {
+      var next = modalSliderCurrent + 1;
+      if (next >= modalSliderTotal) next = 0;
+      goToModalSlide(next);
+    }, 2000);
+  }
+
+  function resetModalAutoplay() {
+    startModalAutoplay();
+  }
+
+  function stopModalAutoplay() {
+    if (modalSliderTimer) {
+      clearInterval(modalSliderTimer);
+      modalSliderTimer = null;
+    }
+  }
+
+  function openModal(index) {
+    var activity = activities[index];
+    if (!activity || !overlay || !modal) return;
+
+    currentIndex = index;
+
+    if (modalImages) {
+      var images = activity.images;
+      var count = images.length;
+      var imageHeight = count === 1 ? "h-52 md:h-72" : "h-48 md:h-64";
+
+      var html = '<div class="relative group/modal-slider">';
+      html += '<div class="overflow-hidden rounded-t-2xl">';
+      html += '<div id="modal-slider-track" class="flex transition-transform duration-700 ease-in-out">';
+
+      for (var i = 0; i < count; i++) {
+        html += '<div class="w-full flex-shrink-0">';
+        html += '<img src="' + images[i] + '" alt="' + activity.alt + '" class="w-full ' + imageHeight + ' object-cover" />';
+        html += '</div>';
+      }
+
+      html += '</div></div>';
+
+      if (count > 1) {
+        html += '<button id="modal-slider-prev" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full transition-colors" aria-label="Anterior">';
+        html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+        html += '</button>';
+        html += '<button id="modal-slider-next" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-9 h-9 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full transition-colors" aria-label="Siguiente">';
+        html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+        html += '</button>';
+
+        html += '<div id="modal-slider-dots" class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">';
+        for (var d = 0; d < count; d++) {
+          html += '<button class="w-2 h-2 rounded-full transition-all duration-300 bg-white/50" aria-label="Ir a imagen ' + (d + 1) + '"></button>';
+        }
+        html += '</div>';
+      }
+
+      html += '</div>';
+
+      modalImages.innerHTML = html;
+
+      initModalSlider(count);
+    }
+
+    if (modalCategory) modalCategory.textContent = activity.category;
+    if (modalTitle) modalTitle.textContent = activity.title;
+    if (modalLocation) modalLocation.textContent = activity.location;
+    if (modalYear) modalYear.textContent = activity.year;
+    if (modalDescription) modalDescription.textContent = activity.description;
+
+    overlay.classList.remove("opacity-0", "pointer-events-none");
+    modal.classList.remove("scale-95");
+    modal.classList.add("scale-100");
+    document.body.style.overflow = "hidden";
+
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeModal() {
+    stopModalAutoplay();
+    if (!overlay || !modal) return;
+    overlay.classList.add("opacity-0", "pointer-events-none");
+    modal.classList.remove("scale-100");
+    modal.classList.add("scale-95");
+    document.body.style.overflow = "";
+
+    var prevCard = document.querySelector('[data-activity-index="' + currentIndex + '"]');
+    if (prevCard) prevCard.focus();
+    currentIndex = -1;
+  }
+
+  document.addEventListener("click", function (e) {
+    var target = e.target;
+    if (!target || !target.closest) return;
+    var card = target.closest("[data-activity-index]");
+    if (card) {
+      var index = parseInt(card.getAttribute("data-activity-index") || "", 10);
+      if (!isNaN(index)) openModal(index);
+    }
+  });
+
+  document.addEventListener("keydown", function (e) {
+    var isOpen = overlay && !overlay.classList.contains("opacity-0");
+
+    if (e.key === "Enter" || e.key === " ") {
+      var target = e.target;
+      if (!target || !target.closest) return;
+      var card = target.closest("[data-activity-index]");
+      if (card && target === card) {
+        e.preventDefault();
+        var index = parseInt(card.getAttribute("data-activity-index") || "", 10);
+        if (!isNaN(index)) openModal(index);
+      }
+    }
+
+    if (e.key === "Escape" && isOpen) {
+      closeModal();
+      return;
+    }
+
+    if (!isOpen || modalSliderTotal <= 1) return;
+
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      goToModalSlide(modalSliderCurrent - 1);
+      resetModalAutoplay();
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      goToModalSlide(modalSliderCurrent + 1);
+      resetModalAutoplay();
+    }
+  });
+
+  if (overlay) {
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) closeModal();
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      closeModal();
+    });
+  }
+</script>
+
+<style is:global>
+  #modal-slider-track {
+    will-change: transform;
+  }
+</style>

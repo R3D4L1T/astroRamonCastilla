@@ -1,0 +1,124 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Home/Navbar.astro";
+import Footer from "../components/shared/Footer.astro";
+
+const tools = await getCollection("tools");
+const tags = [...new Set(tools.flatMap((t) => t.data.tags))];
+---
+
+<Layout title="Catálogo TIC para Docentes | I.E. 80511 - Ramon Castilla">
+  <Navbar />
+  <main class="flex-1 w-full pt-28 pb-12">
+    <div class="max-w-[1200px] mx-auto px-6">
+
+      <section class="text-center mb-10">
+        <h1 class="text-4xl md:text-5xl font-black mb-3">
+          Catálogo TIC para Docentes
+        </h1>
+        <p class="text-slate-500 dark:text-slate-400 text-lg">
+          Herramientas digitales para innovar el aprendizaje en el aula.
+        </p>
+      </section>
+
+      <section class="flex flex-wrap gap-3 justify-center mb-10" id="blog-filters">
+        <button class="tag-btn active px-5 py-2.5 rounded-full font-semibold text-sm cursor-pointer transition-colors border border-blue-100 dark:border-slate-700 bg-primary text-white" data-tag="Todos">
+          Todos
+        </button>
+        {
+          tags.map((tag) => (
+            <button class="tag-btn px-5 py-2.5 rounded-full font-semibold text-sm cursor-pointer transition-colors border border-blue-100 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white" data-tag={tag}>
+              {tag}
+            </button>
+          ))
+        }
+      </section>
+
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="blog-cards">
+        {
+          tools.map((tool) => (
+            <a
+              href={`/blog/${tool.id}`}
+              class="card block bg-slate-200 dark:bg-slate-800 rounded-2xl p-6 no-underline text-inherit transition-transform hover:-translate-y-1 shadow-sm border border-slate-200 dark:border-slate-700"
+              data-tags={tool.data.tags.join(",")}
+            >
+              <div class="text-5xl mb-4">{tool.data.icon}</div>
+
+              <div class="mini-indicators">
+                <span class="dark:text-white" > Precio:  {tool.data.price} </span>
+                <span class="dark:text-white"> Dificultad: {tool.data.difficulty} </span>
+              </div>
+              <h2 class="text-xl font-bold mb-3">{tool.data.titulo}</h2>
+              <p class="text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">{tool.data.descripcion}</p>
+              <div class="flex flex-wrap gap-2">
+                {tool.data.tags.map((t) => (
+                  <span class="bg-blue-50 dark:bg-blue-900/30 text-primary dark:text-blue-300 px-3 py-1.5 rounded-full text-xs font-bold">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </a>
+          ))
+        }
+      </section>
+
+      <p class="text-center mt-10 text-slate-500 hidden" id="blog-empty">
+        No se encontraron herramientas.
+      </p>
+    </div>
+  </main>
+  <Footer />
+
+  <script>
+    const buttons = document.querySelectorAll("#blog-filters .tag-btn");
+    const cards = document.querySelectorAll("#blog-cards .card");
+    const empty = document.getElementById("blog-empty");
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        buttons.forEach((btn) => btn.classList.remove("active", "bg-primary", "text-white"));
+        button.classList.add("active", "bg-primary", "text-white");
+        button.classList.remove("bg-white", "dark:bg-slate-800", "text-slate-700", "dark:text-slate-300");
+
+        const selected = button.dataset.tag;
+        let visible = 0;
+
+        cards.forEach((card) => {
+          const tags = card.dataset.tags || "";
+          if (selected === "Todos" || tags.includes(selected!)) {
+            (card as HTMLElement).style.display = "block";
+            visible++;
+          } else {
+            (card as HTMLElement).style.display = "none";
+          }
+        });
+
+        if (empty) {
+          (empty as HTMLElement).style.display = visible === 0 ? "block" : "none";
+        }
+      });
+    });
+  </script>
+
+  <style>
+    .card {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+    .card:hover {
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
+    .tag-btn.active {
+      background: var(--color-primary, #2563eb);
+      color: white;
+    }
+    .mini-indicators {
+      display: flex;
+      gap:  12px;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 8px 0 14px;
+      color: #333;
+    }
+  </style>
+</Layout>

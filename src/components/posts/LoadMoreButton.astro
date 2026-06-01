@@ -1,0 +1,43 @@
+---
+import Container from '../shared/Container.astro';
+import Icon from '../shared/Icon.astro';
+---
+
+<Container>
+  <div id="load-more-container" class="flex justify-center mt-20">
+    <button
+      id="load-more-btn"
+      class="flex items-center gap-2 px-10 py-4 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold uppercase tracking-widest text-xs hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all rounded group"
+    >
+      <span id="load-more-text">Cargar más actividades</span>
+      <Icon name="chevron-down" size={18} class="transition-transform group-hover:translate-y-1" />
+    </button>
+  </div>
+</Container>
+
+<script>
+  const loadMoreBtn = document.getElementById("load-more-btn");
+  const loadMoreText = document.getElementById("load-more-text");
+
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener("click", () => {
+      const hiddenItems = document.querySelectorAll<HTMLElement>(
+        ".post-card-item.hidden:not(.hidden-by-filter)"
+      );
+      const itemsToShow = Math.min(hiddenItems.length, 6);
+
+      for (let i = 0; i < itemsToShow; i++) {
+        hiddenItems[i].classList.remove("hidden");
+      }
+
+      const remainingHidden = document.querySelectorAll<HTMLElement>(
+        ".post-card-item.hidden:not(.hidden-by-filter)"
+      );
+
+      if (remainingHidden.length === 0 && loadMoreBtn) {
+        (loadMoreBtn as HTMLElement).style.display = "none";
+      }
+
+    });
+  }
+</script>

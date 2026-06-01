@@ -1,0 +1,155 @@
+---
+import Container from '../shared/Container.astro';
+import Icon from '../shared/Icon.astro';
+
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/', label: 'Inicio', exact: true },
+  { href: '/tourism', label: 'Comunidad', exact: false },
+  { href: '/posts', label: 'Actividades', exact: true },
+  { href: '/blog', label: 'Blog', exact: true },
+];
+
+function isActive(link: (typeof navLinks)[number]) {
+  if (link.exact) return currentPath === link.href;
+  return currentPath === link.href || currentPath.startsWith(link.href + '/');
+}
+---
+
+<header class="fixed top-0 w-full z-50 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800">
+  <Container class="h-20 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-3 group cursor-pointer shrink-0">
+      <div class="text-primary">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 48 48">
+          <path d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" />
+        </svg>
+      </div>
+      <h1 class="text-lg md:text-xl font-black tracking-tighter uppercase truncate max-w-[200px] md:max-w-none">I.E 80511 - Ramon Castilla</h1>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex items-center gap-10">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              "text-sm font-semibold transition-colors",
+              isActive(link)
+                ? "text-primary"
+                : "text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary",
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <!-- CTA + Theme toggle + Mobile menu button -->
+    <div class="flex items-center gap-4">
+      <!-- Theme toggle -->
+      <button
+        id="theme-toggle"
+        class="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-primary dark:hover:text-primary transition-colors"
+        aria-label="Cambiar tema"
+      >
+        <span class="block dark:hidden">
+          <Icon name="moon" size={20} />
+        </span>
+        <span class="hidden dark:block">
+          <Icon name="sun" size={20} />
+        </span>
+      </button>
+
+      <a
+        href="/about"
+        class="hidden md:flex bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded text-sm font-bold uppercase tracking-wider transition-all items-center gap-2"
+      >
+        Nosotros
+      </a>
+
+      <!-- Mobile menu button -->
+      <button
+        id="mobile-menu-btn"
+        class="md:hidden p-2 text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors"
+        aria-label="Abrir menu"
+      >
+        <span id="menu-icon-open">
+          <Icon name="menu" size={24} />
+        </span>
+        <span id="menu-icon-close" class="hidden">
+          <Icon name="close" size={24} />
+        </span>
+      </button>
+    </div>
+  </Container>
+
+  <!-- Mobile Menu -->
+  <div
+    id="mobile-menu"
+    class="md:hidden hidden overflow-hidden border-t border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-background-dark/95 backdrop-blur-md"
+  >
+    <nav class="flex flex-col py-6 px-6 gap-1">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              "py-3.5 px-4 rounded-lg text-base font-semibold transition-colors",
+              isActive(link)
+                ? "bg-primary/10 text-primary"
+                : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary dark:hover:text-primary",
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <a
+        href="/about"
+        class="mt-3 bg-primary hover:bg-primary/90 text-white px-4 py-3.5 rounded-lg text-base font-bold uppercase tracking-wider transition-all text-center"
+      >
+        Nosotros
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('menu-icon-open');
+  const iconClose = document.getElementById('menu-icon-close');
+
+  let isOpen = false;
+
+  function setMenu(state: boolean) {
+    isOpen = state;
+    if (isOpen) {
+      mobileMenu?.classList.remove('hidden');
+      iconOpen?.classList.add('hidden');
+      iconClose?.classList.remove('hidden');
+      menuBtn?.setAttribute('aria-label', 'Cerrar menu');
+    } else {
+      mobileMenu?.classList.add('hidden');
+      iconOpen?.classList.remove('hidden');
+      iconClose?.classList.add('hidden');
+      menuBtn?.setAttribute('aria-label', 'Abrir menu');
+    }
+  }
+
+  menuBtn?.addEventListener('click', () => setMenu(!isOpen));
+
+  mobileMenu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setMenu(false));
+  });
+
+  const themeToggle = document.getElementById('theme-toggle');
+  themeToggle?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+</script>

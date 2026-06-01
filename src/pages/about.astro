@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Home/Navbar.astro';
+
+import AboutHero from '../components/about/AboutHero.astro';
+import StatsRibbon from '../components/about/StatsRibbon.astro';
+import PhilosophyHistory from '../components/about/PhilosophyHistory.astro';
+import TeamSection from '../components/about/TeamSection.astro';
+import AboutCTA from '../components/about/AboutCTA.astro';
+import Footer from '../components/shared/Footer.astro';
+
+import ContactHero from '../components/contact/ContactHero.astro';
+import ContactForm from '../components/contact/ContactForm.astro';
+import ContactInfo from '../components/contact/ContactInfo.astro';
+import ContactDirect from '../components/contact/ContactDirect.astro';
+import ContactMap from '../components/contact/ContactMap.astro';
+import SocialLinks from '../components/contact/SocialLinks.astro';
+import NewsletterSection from '../components/contact/NewsletterSection.astro';
+
+
+---
+
+<Layout title="About Us | Studio Alpha Architecture">
+  <Navbar />
+  <main>
+    <AboutHero />
+    <StatsRibbon />
+    <PhilosophyHistory />
+    <TeamSection />
+    <AboutCTA />
+
+    <!--Contact content-->
+    <ContactHero />
+    
+    <section class="max-w-7xl mx-auto px-6 pb-24">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        {/* Left Column: Form */}
+        <div class="lg:col-span-7">
+          <ContactForm />
+        </div>
+        
+        {/* Right Column: Info & Map */}
+        <div class="lg:col-span-5 space-y-12">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-10">
+            <ContactInfo />
+            <ContactDirect />
+          </div>
+          
+          <ContactMap />
+          <SocialLinks />
+        </div>
+      </div>
+    </section>
+    <NewsletterSection />
+  </main>
+  <Footer />
+</Layout>
