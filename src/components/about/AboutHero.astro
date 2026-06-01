@@ -1,19 +1,18 @@
 ---
-import { Image } from 'astro:assets';
+
 import heroImage from '../../assets/img/about-page-img-05.jpg';
 ---
 
 <section class="relative w-full h-[70vh] flex items-center overflow-hidden">
   <div class="absolute inset-0 z-0">
-    <Image
-      src={heroImage}
+    <img
+      src={heroImage.src}
       alt="Modern architectural studio space with large windows and clean lines"
       class="w-full h-full object-cover grayscale brightness-75 hover:grayscale-0 transition-all duration-1000"
       loading="eager"
       fetchpriority="high"
-      layout="full-width"
-      format="webp"
-      fit="cover"
+      width={heroImage.width}
+      height={heroImage.height}
     />
     <div class="absolute inset-0 bg-gradient-to-t from-background-light dark:from-background-dark via-transparent to-transparent" />
   </div>

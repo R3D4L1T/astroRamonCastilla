@@ -1,11 +1,13 @@
 ---
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   title: string
   slug: string
   description: string
   location: string
   date: string
-  image: string
+  image: ImageMetadata
   tags: string[]
 }
 
@@ -90,9 +92,12 @@ const {
   <!-- IMAGEN -->
   <div class="relative aspect-video overflow-hidden md:h-full md:w-[55%]">
     <img
-      src={image}
+      src={image.src}
       alt={title}
       class="h-full w-full object-cover grayscale transition-all duration-700 ease-in-out group-hover:scale-110 group-hover:grayscale-0"
+      loading="lazy"
+      width={image.width}
+      height={image.height}
       />
   </div>
 </div>

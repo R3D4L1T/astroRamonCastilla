@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro'
 import { tourismPlaces } from '../../components/tourism/TourismPlaces'
+import TourismoPlaceHero from '../../components/tourism/TourismoPlaceHero.astro'
 
 const place = tourismPlaces.find(p => p.slug === 'plaza-principal')!
 ---
@@ -9,33 +10,7 @@ const place = tourismPlaces.find(p => p.slug === 'plaza-principal')!
 
   <main>
 
-    <!-- HERO IMAGE -->
-    <section class="relative h-[50vh] md:h-[70vh] overflow-hidden">
-      <img
-        src={place.image}
-        alt={place.title}
-        class="w-full h-full object-cover animate-fade-in"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20"></div>
-
-      <div class="absolute bottom-0 left-0 right-0 p-6 md:p-16">
-        <a
-          href="/"
-          class="inline-flex items-center gap-2 text-neutral-400 hover:text-white transition-colors duration-300 mb-6 group"
-        >
-          <span class="group-hover:-translate-x-1 transition-transform duration-300">&larr;</span>
-          <span class="uppercase tracking-[0.3em] text-xs">Volver al inicio</span>
-        </a>
-
-        <h1 class="text-4xl sm:text-5xl md:text-8xl font-black uppercase leading-[0.9] mb-4">
-          {place.title}
-        </h1>
-
-        <p class="text-lg md:text-2xl text-neutral-300 max-w-2xl font-light">
-          {place.subtitle}
-        </p>
-      </div>
-    </section>
+    <TourismoPlaceHero image={place.image} title={place.title} subtitle={place.subtitle}/>
 
     <!-- CONTENIDO -->
     <section class="py-20 md:py-32 px-6">

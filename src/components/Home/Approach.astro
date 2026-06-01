@@ -2,7 +2,7 @@
 import Container from '../shared/Container.astro';
 import Button from '../shared/Button.astro';
 import Icon from '../shared/Icon.astro';
-import { Image } from 'astro:assets';
+
 import approachImage from '../../assets/img/home-page-img-02.jpg';
 ---
 
@@ -12,21 +12,15 @@ import approachImage from '../../assets/img/home-page-img-02.jpg';
       <!-- Image -->
       <div class="order-2 lg:order-1">
         <div class="relative overflow-hidden rounded group">
-          <Image
-  src={approachImage}
-  alt="Abstract architectural lines of a white building façade"
-  class="w-full aspect-square object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
-  loading="lazy"
-  decoding="async"
-  layout="constrained"
-  width={800}
-  height={800}
-  format="webp"
-  fit="cover"
-  widths={[400, 600, 800, 1024]}
-  sizes="(max-width: 1024px) 100vw, 50vw"
-  quality={80}
-/>
+          <img
+            src={approachImage.src}
+            alt="Abstract architectural lines of a white building façade"
+            class="w-full aspect-square object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+            loading="lazy"
+            decoding="async"
+            width={800}
+            height={800}
+          />
           <div class="absolute inset-0 border-[20px] border-white/10 pointer-events-none" />
         </div>
       </div>
