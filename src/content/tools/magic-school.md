@@ -17,7 +17,8 @@ uri: "https://www.magicschool.ai/"
 ---
 
 
-# ¡Hola, Profe! Descubre MagicSchool, tu nuevo asistente con Inteligencia Artificial ✨
+# ¡Hola, Profe! Descubre MagicSchool ✨
+
 
 ¿Sientes que el día no tiene suficientes horas entre planificaciones, rúbricas y materiales? ¡No estás solo! Te presentamos **MagicSchool**, una plataforma diseñada por y para docentes, creada especialmente para facilitarte la vida, **aunque no seas un experto en tecnología**.
 
@@ -41,7 +42,7 @@ No necesitas ser un gurú tecnológico, solo asegúrate de tener:
 
 Si eres de los que prefiere ver para aprender, o quieres ir directo a la acción, aquí tienes tus accesos directos:
 
-- 🎬 **¿Prefieres un video?** Mira este [Video Introductorio en YouTube](https://www.google.com/search?q=https://www.youtube.com/watch%3Fv%3DK5W2m1b7j4Q&authuser=1) y descubre cómo se ve la plataforma por dentro.
+- 🎬 **¿Prefieres un video?** Mira este [Video Introductorio en YouTube](https://www.youtube.com/watch?v=LNrvOwvsuFo )y descubre cómo se ve la plataforma por dentro.
 - 🌐 **¡Quiero explorar ya!** Entra a la [Página Oficial de MagicSchool](https://www.magicschool.ai/) y regístrate.
 - ❓ **¿Te trabaste en algo?** No te preocupes, el [Centro de Ayuda de MagicSchool](https://www.google.com/search?q=https://help.magicschool.ai/&authuser=1) tiene respuestas para todo.
 
