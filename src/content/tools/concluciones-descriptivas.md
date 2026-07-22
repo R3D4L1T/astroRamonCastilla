@@ -32,7 +32,7 @@ La idea es usarla como apoyo para avanzar más rápido.
 
 ### 📝 Paso 1: Copiar las notas del registro
 
-Primero necesitamos copiar la información del estudiante.
+Primero necesitamos copiar la información de los estudiantes como imagen o como datos.
 
 Puede ser:
 - notas,
